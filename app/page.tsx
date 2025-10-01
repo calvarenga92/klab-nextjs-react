@@ -18,7 +18,7 @@ export default function HomePage() {
     setData(null);
     try {
       const raw = unmaskCEP(cep);
-      const res = await fetch(`/api/cep?cep=${raw}`);
+      const res = await fetch(`/api/lookup?cep=${raw}`);
       const json = await res.json();
       if (!res.ok || json?.erro) throw new Error(json?.error || "CEP não encontrado");
       setData(json);
@@ -33,7 +33,6 @@ export default function HomePage() {
     <div className="grid gap-6">
       <div className="rounded-2xl border p-4">
         <h1 className="text-2xl font-semibold mb-2">Pesquisar CEP</h1>
-        <p className="text-sm text-gray-600 mb-4">Formato: xx.xxx-xxx</p>
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3">
           <input
             className="border rounded-xl px-4 py-3 flex-1 outline-none focus:ring-2"
@@ -45,7 +44,6 @@ export default function HomePage() {
           />
           <button
             className="rounded-xl px-5 py-3 bg-black text-white disabled:opacity-50"
-            style={{ backgroundColor: "rgb(193, 33, 16)" }}
             disabled={loading || unmaskCEP(cep).length !== 8}
           >
             {loading ? "Buscando..." : "Buscar"}
@@ -53,7 +51,6 @@ export default function HomePage() {
         </form>
         {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
       </div>
-
       {data && (
         <div className="rounded-2xl border p-4">
           <h2 className="text-xl font-semibold mb-2">Resultado</h2>

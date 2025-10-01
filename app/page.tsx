@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { formatCEP, unmaskCEP, type CepResult } from "@/lib/format";
 
+type WeatherResult = { temperatureC: number; weatherText: string };
+
 export default function HomePage() {
   const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<CepResult | null>(null);
+  const [weather, setWeather] = useState<WeatherResult | null>(null);
 
   const onChange = (v: string) => setCep(formatCEP(v));
 
@@ -16,12 +19,16 @@ export default function HomePage() {
     setError(null);
     setLoading(true);
     setData(null);
+    setWeather(null);
     try {
       const raw = unmaskCEP(cep);
-      const res = await fetch(`/api/lookup?cep=${raw}`);
+      const res = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
       const json = await res.json();
       if (!res.ok || json?.erro) throw new Error(json?.error || "CEP não encontrado");
       setData(json);
+      const wRes = await fetch(`/api/weather?city=${encodeURIComponent(json.localidade)}&uf=${json.uf}`);
+      const wJson = await wRes.json();
+      if (wRes.ok) setWeather(wJson);
     } catch (err: any) {
       setError(err.message || "Erro");
     } finally {
@@ -32,7 +39,7 @@ export default function HomePage() {
   return (
     <div className="grid gap-6">
       <div className="rounded-2xl border p-4">
-        <h1 className="text-2xl font-semibold mb-2">Pesquisar CEP</h1>
+        <h1 className="text-2xl font-semibold mb-2">Pesquisar CEP + Clima</h1>
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3">
           <input
             className="border rounded-xl px-4 py-3 flex-1 outline-none focus:ring-2"
@@ -62,6 +69,12 @@ export default function HomePage() {
             <div><span className="text-gray-500">Bairro:</span> {data.bairro || "-"}</div>
             <div><span className="text-gray-500">DDD:</span> {data.ddd || "-"}</div>
           </div>
+          {weather && (
+            <div className="mt-4">
+              <h3 className="font-semibold">Clima atual</h3>
+              <p>{weather.temperatureC}°C - {weather.weatherText}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

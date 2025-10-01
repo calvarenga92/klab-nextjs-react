@@ -45,6 +45,7 @@ export default function HomePage() {
           />
           <button
             className="rounded-xl px-5 py-3 bg-black text-white disabled:opacity-50"
+            style={{ backgroundColor: "rgb(193, 33, 16)" }}
             disabled={loading || unmaskCEP(cep).length !== 8}
           >
             {loading ? "Buscando..." : "Buscar"}

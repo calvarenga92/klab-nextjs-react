@@ -13,8 +13,10 @@ export function setHistory(records: HistoryRecord[]) {
   cookies().set({ name: COOKIE_NAME, value: JSON.stringify(records), httpOnly: false, path: "/", sameSite: "lax" });
 }
 export function addHistory(rec: HistoryRecord) {
-  const list = getHistory();
+  let list = getHistory();
+  list = list.filter(r => r.cep !== rec.cep);
   list.unshift(rec);
+  if (list.length > 10) list = list.slice(0, 10);
   setHistory(list);
   return list;
 }

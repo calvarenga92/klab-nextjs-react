@@ -6,16 +6,4 @@ export function formatCEP(input: string): string {
   if (digits.length <= 8) return digits.slice(0,2) + "." + digits.slice(2,5) + "-" + digits.slice(5);
   return digits.slice(0,2) + "." + digits.slice(2,5) + "-" + digits.slice(5,8);
 }
-export function unmaskCEP(masked: string): string {
-  return masked.replace(/\D/g, "");
-}
-export type CepResult = {
-  cep: string;
-  logradouro?: string;
-  complemento?: string;
-  bairro?: string;
-  localidade: string;
-  uf: string;
-  ddd?: string;
-  erro?: boolean;
-};
+export function unmaskCEP(masked: string): string { return masked.replace(/\D/g, ""); }

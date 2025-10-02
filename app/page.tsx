@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatCEP, unmaskCEP } from "@/lib/format";
 import type { HistoryRecord } from "@/lib/types";
+import Card from "./components/Card";
 
 type CepResult = { cep: string; localidade: string; uf: string; logradouro?: string; bairro?: string; ddd?: string; erro?: boolean };
 type WeatherResult = { temperatureC: number; weatherText: string };
@@ -51,11 +52,11 @@ export default function HomePage() {
 
   return (
     <div className="grid gap-6">
-      <div className="rounded-2xl border p-4">
-        <h1 className="text-2xl font-semibold mb-2">KLAB-0003 Histórico</h1>
+      <Card>
+        <h1 className="text-xl font-semibold mb-2">KLAB-0001 - Pesquisar por CEP</h1>
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3">
           <input
-            className="border rounded-xl px-4 py-3 flex-1 outline-none focus:ring-2"
+            className="border rounded-xl px-4 py-3 flex-1 outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="12.345-678"
             value={cep}
             onChange={(e) => onChange(e.target.value)}
@@ -64,16 +65,17 @@ export default function HomePage() {
           />
           <button
             className="rounded-xl px-5 py-3 bg-black text-white disabled:opacity-50"
+            style={{ backgroundColor: "rgb(193, 33, 16)" }}
             disabled={loading || unmaskCEP(cep).length !== 8}
           >
             {loading ? "Buscando..." : "Buscar"}
           </button>
         </form>
         {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
-      </div>
+      </Card>
 
       {result && (
-        <div className="rounded-2xl border p-4">
+        <Card>
           <h2 className="text-xl font-semibold mb-2">Resultado</h2>
           <div className="grid sm:grid-cols-2 gap-2 text-sm">
             <div><span className="text-gray-500">CEP:</span> {result.cep.cep}</div>
@@ -85,7 +87,7 @@ export default function HomePage() {
           </div>
           {result.weather && (
             <div className="mt-4 text-sm ">
-              <h3 className="font-semibold">Clima atual</h3>
+              <h3 className="font-semibold">KLAB-0002 - Informações Meteorológicas</h3>
               <div className="grid sm:grid-cols-2 gap-2 text-sm">
                 <div><span className="text-gray-500">Temperatura:</span> {result.weather.temperatureC}°C</div>
                 <div><span className="text-gray-500">Condição:</span> {result.weather.weatherText}</div>
@@ -95,8 +97,13 @@ export default function HomePage() {
           <div className="mt-4 text-sm">
             <a className="underline" href="/historico">Ver histórico</a>
           </div>
-        </div>
+        </Card>
       )}
+
+      <Card>
+        <h2 className="text-xl font-semibold mb-2">KLAB-0003 - Persistência de sessão</h2>
+        <p className="text-sm text-gray-600">As últimas consultas ficam armazenadas em <b>cookies</b> (até 10). Veja em <a className="underline" href="/historico">/historico</a>.</p>
+      </Card>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import { getHistory } from "@/lib/cookies";
 import ClientTable from "./table";
 
